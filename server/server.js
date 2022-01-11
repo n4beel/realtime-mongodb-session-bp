@@ -2,18 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const api = require('./routes/api');
-const Pusher = require('pusher');
 require('dotenv').config();
-
-const pusher = new Pusher({
-    appId: process.env.APP_ID,
-    key: process.env.APP_KEY,
-    secret: process.env.APP_SECRET,
-    cluster: process.env.APP_CLUSTER,
-    useTLS: true,
-});
-
-const channel = 'tasks';
 
 const app = express();
 
@@ -37,30 +26,5 @@ db.on('error', console.error.bind(console, 'Connection Error:'));
 db.once('open', () => {
     app.listen(9000, () => {
         console.log('Node server running on port 9000');
-    });
-
-    const taskCollection = db.collection('tasks');
-    const changeStream = taskCollection.watch();
-
-    changeStream.on('change', (change) => {
-        console.log(change);
-
-        if (change.operationType === 'insert') {
-            const task = change.fullDocument;
-            pusher.trigger(
-                channel,
-                'inserted',
-                {
-                    id: task._id,
-                    task: task.task,
-                }
-            );
-        } else if (change.operationType === 'delete') {
-            pusher.trigger(
-                channel,
-                'deleted',
-                change.documentKey._id
-            );
-        }
     });
 });

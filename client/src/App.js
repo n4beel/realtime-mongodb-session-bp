@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
 import './App.css';
-import Pusher from 'pusher-js';
-
-let pusher, channel
 const API_URL = 'http://192.168.18.2:9000/api/';
 
 function App() {
@@ -12,15 +9,6 @@ function App() {
 
   useEffect(() => {
     fetchTasks()
-    pusher = new Pusher(process.env.REACT_APP_KEY, {
-      cluster: process.env.REACT_APP_CLUSTER,
-      useTLS: true,
-    });
-
-    channel = pusher.subscribe('tasks');
-
-    channel.bind('inserted', addTask);
-    channel.bind('deleted', removeTask);
   }, [])
 
   useEffect(() => {
@@ -62,15 +50,6 @@ function App() {
     fetch(API_URL + id, {
       method: 'delete'
     })
-  }
-
-  const addTask = (newTask) => {
-    setTask('')
-    fetchTasks()
-  }
-
-  const removeTask = (id) => {
-    fetchTasks()
   }
 
   let tasksList = tasks.map(item =>
