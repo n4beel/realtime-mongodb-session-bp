@@ -79,9 +79,9 @@ function App() {
 
   return (
     <div className="todo-wrapper">
-      <form>
+      <form onSubmit={postTask}>
         <input type="text" className="input-todo" placeholder="New task" onChange={updateText} value={task} />
-        <div className="btn btn-add" onClick={postTask}>+</div>
+        <button className="btn btn-add">+</button>
       </form>
 
       <ul>
